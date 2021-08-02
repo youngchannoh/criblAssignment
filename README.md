@@ -1,5 +1,5 @@
-# criblAssignment
-The following is how to run this project.
+# cribl Assignment
+Well,  it has been a while doing homework :)
 
 ## version
 1.0.0
@@ -20,29 +20,29 @@ Validate if data received on the 2 "Target" nodes matchs with the one from "Agen
     ○ Create a docker image named "cribl_image"
     ○ Create a volume for "target_1"
     ○ Create a volume for "target_2"
-    ○ Docker run for "target_1"
-    ○ Docker run for "target_2"
-    ○ Docker run for "splitter"
+    ○ Start a container: "target_1"
+    ○ Start a container: "target_2"
+    ○ Start a container: "splitter"
 
 ---
 
-## How to run test case
-    ○ Run test cases using 
+## How to run test cases
+    ○ Tool
         § Jenkins
         § Robot Framework with python
-    ○ Docker run for "agent" (This has all test cases)
-    ○ Test Case
-        § Run "agent" with different files (including the file provided from Cribl)
+    ○ Start a container for "agent" and run test cases automatically
+    ○ How to run each test case
+        § Run "agent" with a different file (including the file provided from Cribl)
         § Validates if data received on the "Target" nodes are correct.
 
 ---      
 ## Teardown
-    ○ Clear "agent"
-    ○ Clear "splitter"
-    ○ Clear "target_1"
-    ○ Clear "target_2"
-    ○ Delete a volume for "target_1"
-    ○ Delete a volume for "target_2"
+    ○ Exit the container:  "agent"
+    ○ Exit the container: "splitter"
+    ○ Exit the container: "target_1"
+    ○ Exit the container: "target_2"
+    ○ Delete the volume for "target_1"
+    ○ Delete the volume for "target_2"
      
 ---
 ##  CICD
