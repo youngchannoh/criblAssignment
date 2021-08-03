@@ -1,7 +1,9 @@
+import json
 import sys
 import os
 import pandas as pd
 from tabulate import tabulate
+from subprocess import check_output
 
 
 def compare2LogFiles(fileBase, fileToCheck, fileToCheckDir, rootDir):
@@ -104,6 +106,32 @@ def deleteTargetLogFiles(rootDir):
         print("File not found({0}): {1}".format(e.errno, e.strerror))
     except:  # handle other exceptions such as attribute errors
         print ("Unexpected error:", sys.exc_info()[0])
+
+def startNodeAgent(rootDir):
+    agentJS = rootDir + "/assignment/app.js"
+    agenDir = rootDir + "/assignment/agent"
+    p = check_output(['node', agentJS, agenDir])
+    print(p)
+
+def changeAgent_InputJson(rootDir, fileBase):
+
+    try:
+        agentInputJson = rootDir + "/assignment/agent/inputs.json"
+        print("* Aget input.json full path : ", agentInputJson)
+        newInput_withPath = rootDir + "/volume/robotTestCases/testData/" + fileBase
+        print("* Change agent->input.json->monitor to : ", newInput_withPath)
+        with open(agentInputJson, "r") as jsonFile:
+            data = json.load(jsonFile)
+            data["monitor"] = newInput_withPath
+
+        with open(agentInputJson, "w") as jsonFile:
+            jsonFile.write(json.dumps(data))
+
+    except FileNotFoundError as e:
+        print("File not found({0}): {1}".format(e.errno, e.strerror))
+    except:  # handle other exceptions such as attribute errors
+        print ("Unexpected error:", sys.exc_info()[0])
+
 
 
 if __name__ == "__main__":

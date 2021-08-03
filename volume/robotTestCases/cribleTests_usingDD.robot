@@ -30,6 +30,10 @@ criblDataDriverTest
 criblTestTemplate
     [Arguments]  ${fileBase}
 
+    changeAgent_InputJson  ${ROOTDIR}  ${fileBase}
+
+    startNodeAgent  ${ROOTDIR}
+
     ${passOrFail_1}  ${reason_1}  compare2LogFiles   ${fileBase}   ${fileOnTarget}  ${fileDirOnTarget_1}  ${ROOTDIR}
     ${passOrFail_2}  ${reason_2}  compare2LogFiles   ${fileBase}   ${fileOnTarget}  ${fileDirOnTarget_2}  ${ROOTDIR}
 
