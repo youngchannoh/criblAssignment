@@ -5,55 +5,73 @@ import pandas as pd
 from tabulate import tabulate
 from subprocess import check_output
 
+rootDir = os.environ["ENV_ROOTDIR"]
 
-def compare2LogFiles(fileBase, fileToCheck, fileToCheckDir, rootDir):
+def compare2LogFiles(fileBase, fileToCheck, fileToCheckDir):
     try:
         failOrPass = "FAIL"
         reasonToFail = None
+        global  rootDir
 
 
-        filepath_base = rootDir + "/volume/robotTestCases/testData/" + fileBase
+
+        #filepath_base = rootDir + "/volume/robotTestCases/testData/" + fileBase
+        filepath_base = rootDir + "/assignment/agent/inputs/" + fileBase
         filepath_check = rootDir + "/volume/" + fileToCheckDir + "/" + fileToCheck
 
-        print("# Starting to compare..")
-        print("=> %s and %s"%(filepath_base, filepath_check))
+        print("# Starting to compare 2 files as follows..")
+        print("=> %s" % (filepath_base))
+        print("=> %s" % (filepath_check))
 
+        # Import files to dataframe -> Add column name for rows.
         df1 = pd.read_csv(filepath_base, names=['lineContent'])
         df2 = pd.read_csv(filepath_check, names=['lineContent'])
 
         if (df1.equals(df2)):
             failOrPass = "PASS"
             reasonToFail = "* Comparison result : The 2 files are identical"
-            # print ("* Comparison result : The 2 files are identical")
             return failOrPass
 
-        df1['lineNumber'] = df1.index
-        df2['lineNumber'] = df2.index
+        # Change the index to string "lineNum"
+        df1['lineNum'] = df1.index
+        df2['lineNum'] = df2.index
+        df_merged = pd.merge(df1, df2, how='outer', indicator=True)
 
-        frames = [df1, df2]
-        df_merged = pd.concat(frames)
-        df_merged['lineNumber'] = df_merged.index
+        # Drop duplicates based on lineContent
+        df_unique = df_merged.drop_duplicates(subset=['lineContent'], keep=False)
 
-        #merge 2 dataframes and merge -> Delete duplicates
-        df_unique = df_merged.drop_duplicates(keep=False)
-        pd.set_option('expand_frame_repr', False)
-        pd.set_option('display.max_rows', None)
-
-        #Since this df shows all unique lines which is double of all different lines.
-        numErrors = int(len(df_unique)/2)
+        # Get the rows with unmatched in and out
+        df_unique_in = df_unique[df_unique['_merge'].str.contains("left_only")]
+        totalNumberOfRowsIn = len(df1)
+        totalNumberOfRowsOut = len(df2)
+        numErrors = len(df_unique_in)
+        #This is needed as a return value
         reasonToFail = "* Comparison result : Number of unmatched row is " + str(numErrors)
+        df_unique_out = df_unique[df_unique['_merge'].str.contains("right_only")]
 
-        #Create df with the 1st half
-        df_unique_half = df_unique.head(numErrors)
-        # Create df with the last half
-        df_unique_lastHalf = df_unique.tail(numErrors)
-        df_merged_sideByside =  pd.concat([df_unique_half.reset_index(drop=1).add_suffix('_in'),
-                   df_unique_lastHalf.reset_index(drop=1).add_suffix('_out')], axis=1).fillna('')
+        # Merge side by side for etter view
+        df_merged_sideByside = pd.concat([df_unique_in.reset_index(drop=1).add_suffix('_in'),
+                                          df_unique_out.reset_index(drop=1).add_suffix('_out')], axis=1)
 
-        #Print the result using tabulate library to show table form side by side
-        print ("\n##### Detailed Result #### ")
-        print('* Total number of unmatched row:', numErrors)
-        print(tabulate(df_merged_sideByside[['lineNumber_in', 'lineContent_in', 'lineContent_out']], headers='keys', tablefmt='fancy_grid'))
+        # Print the result using tabulate library to show table form side by side
+        print("\n##### Detailed Result #### ")
+        print('* In: Total number of rows for %s   : %s'%(fileBase,totalNumberOfRowsIn))
+        print('* Out: Total number of rows for %s  : %s'%(fileToCheck, totalNumberOfRowsOut))
+        print('* Total number of unmatched rows:', numErrors)
+        # print(tabulate(df_merged_sideByside[
+        #                    ['lineNum_in', 'lineContent_in', "_merge_in", "lineNum_out", 'lineContent_out',
+        #                     "_merge_out"]], headers='keys', tablefmt='fancy_grid'))
+        # Creating csv file for the result -> Save it to .../volume/robotTestCases/results/ directory.
+
+        print('* Exporting the result to :', fileBase)
+        fileBase = "compareResult_" + fileBase
+        df_merged_sideByside.to_csv(rootDir + "/volume/robotTestCases/results/" + fileBase + ".csv")
+
+        #Move the result files to result directory
+        # oriDir = rootDir + "/volume/robotTestCases/" + fileBase + ".csv"
+        # desDir = rootDir + "/volume/robotTestCases/results/" + fileBase + ".csv"
+        # os.rename(oriDir, desDir)
+
     except FileNotFoundError as e:
         print("File not found({0}): {1}".format(e.errno, e.strerror))
         reasonToFail = "FileNotFoundError"
@@ -64,17 +82,11 @@ def compare2LogFiles(fileBase, fileToCheck, fileToCheckDir, rootDir):
         print("Parse error({0}): {1}".format(e.errno, e.strerror))
         reasonToFail = "Parse error"
     except:  # handle other exceptions such as attribute errors
-        print ("Unexpected error:", sys.exc_info()[0])
+        print("Unexpected error:", sys.exc_info()[0])
         reasonToFail = "Unexpected error"
     finally:
         return failOrPass, reasonToFail
 
-def  fail_if_stringContains_FAIL_None_old (varString):
-    print ("The input string is ", varString )
-    if ('FAIL' in varString) or ('None' in varString) :
-        return 'FAIL'
-    else:
-        return 'PASS'
 
 def  fail_if_stringContains_FAIL_None (target_1, passOrFail_1, reason_1, target_2, passOrFail_2, reason_2):
 
@@ -86,8 +98,9 @@ def  fail_if_stringContains_FAIL_None (target_1, passOrFail_1, reason_1, target_
         return 'PASS', combinedStaring_reason
 
 
-def deleteTargetLogFiles(rootDir):
+def deleteTargetLogFiles():
     logFileName = "events.log"
+    global rootDir
 
     try:
         logfile_target_1 = rootDir + "/volume/target_1/" + logFileName
@@ -107,15 +120,17 @@ def deleteTargetLogFiles(rootDir):
     except:  # handle other exceptions such as attribute errors
         print ("Unexpected error:", sys.exc_info()[0])
 
-def startNodeAgent(rootDir):
+def startNodeAgent():
+    global rootDir
     agentJS = rootDir + "/assignment/app.js"
-    agenDir = rootDir + "/assignment/agent"
+    agenDir = rootDir + "/assignment/agent/"
     p = check_output(['node', agentJS, agenDir])
     print(p)
 
-def changeAgent_InputJson(rootDir, fileBase):
+def changeAgent_InputJson_old(fileBase):
 
     try:
+        global rootDir
         agentInputJson = rootDir + "/assignment/agent/inputs.json"
         print("* Aget input.json full path : ", agentInputJson)
         newInput_withPath = rootDir + "/volume/robotTestCases/testData/" + fileBase
@@ -132,10 +147,30 @@ def changeAgent_InputJson(rootDir, fileBase):
     except:  # handle other exceptions such as attribute errors
         print ("Unexpected error:", sys.exc_info()[0])
 
+def changeAgent_InputJson(fileBase):
 
+    try:
+        global rootDir
+        agentInputJson = rootDir + "/assignment/agent/inputs.json"
+        print("* Aget input.json full path : ", agentInputJson)
+        newInput_withPath = "inputs/" + fileBase
+        "inputs/"
+        print("* Change agent->input.json->monitor to : ", newInput_withPath)
+        with open(agentInputJson, "r") as jsonFile:
+            data = json.load(jsonFile)
+            data["monitor"] = newInput_withPath
+
+        with open(agentInputJson, "w") as jsonFile:
+            jsonFile.write(json.dumps(data))
+
+    except FileNotFoundError as e:
+        print("File not found({0}): {1}".format(e.errno, e.strerror))
+    except:  # handle other exceptions such as attribute errors
+        print ("Unexpected error:", sys.exc_info()[0])
 
 if __name__ == "__main__":
     baseDir = 'D:\young\\temp\\'
     filepath_check = baseDir + 'events.log'
     filepath_base = baseDir + 'large_1M_events.log'
-    compare2LogFiles(filepath_base, filepath_base)
+    #compare2LogFiles(filepath_base, filepath_base)
+    startNodeAgent()

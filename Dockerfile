@@ -7,8 +7,9 @@ EXPOSE 9997
 WORKDIR /app
 ADD assignment /app/assignment
 COPY run*.sh   /app/
-
-# Change gcp configuration shell script in order to run
+COPY requirements.txt  /app/
 RUN chmod 777 /app/*.sh
 
 
+############# updating requirements
+RUN python3 -m pip install -r requirements.txt

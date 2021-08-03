@@ -1,3 +1,4 @@
 *** Test Cases ***;${fileBase};
 cribl->large_1M_events.log;large_1M_events.log;
+cribl->medium_1M_events.log;medium_1M_events.log;
 cribl->small_1M_events.log;small_1M_events.log;
