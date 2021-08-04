@@ -8,7 +8,6 @@ Suite Setup     deleteTargetLogFiles
 Test Template  criblTestTemplate
 
 #Test Setup   sleep  10
-#delete existing events.log
 Test Teardown   deleteTargetLogFiles
 
 *** Variables ***

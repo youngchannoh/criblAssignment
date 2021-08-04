@@ -1,3 +1,4 @@
+#!/bin/bash
 ### Variables ###
 dockerImage=cribl_image
 bridgNetworkName=cribl_network
@@ -15,7 +16,7 @@ fileToRunOnContainer_s=run_splitter.sh
 docker volume create --driver local  --opt type=none --opt device=${hostLocalDir_t1} --opt o=bind ${sharedVolume_t1}
 docker volume create --driver local  --opt type=none --opt device=${hostLocalDir_t2} --opt o=bind ${sharedVolume_t2}
 ### Start Containers
-docker run -d -v ${sharedVolume_t1}:${containerDir} --rm --network ${bridgNetworkName} --name ${hostName_t1} -it ${dockerImage} bash  ${fileToRunOnContainer_t}
-docker run -d -v ${sharedVolume_t2}:${containerDir} --rm --network ${bridgNetworkName} --name ${hostName_t2} -it ${dockerImage} bash  ${fileToRunOnContainer_t}
-docker run -d --rm --network ${bridgNetworkName} --name ${hostName_s} -it ${dockerImage} bash  ${fileToRunOnContainer_s}
+docker run -d -v ${sharedVolume_t1}:${containerDir} --rm --network ${bridgNetworkName} --name ${hostName_t1}  ${dockerImage} bash  ${fileToRunOnContainer_t}
+docker run -d -v ${sharedVolume_t2}:${containerDir} --rm --network ${bridgNetworkName} --name ${hostName_t2}  ${dockerImage} bash  ${fileToRunOnContainer_t}
+docker run -d --rm --network ${bridgNetworkName} --name ${hostName_s} ${dockerImage} bash  ${fileToRunOnContainer_s}
 
