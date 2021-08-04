@@ -1,6 +1,8 @@
 import json
 import sys
 import os
+import time
+
 import pandas as pd
 from tabulate import tabulate
 from subprocess import check_output
@@ -58,19 +60,18 @@ def compare2LogFiles(fileBase, fileToCheck, fileToCheckDir):
         print('* In: Total number of rows for %s   : %s'%(fileBase,totalNumberOfRowsIn))
         print('* Out: Total number of rows for %s  : %s'%(fileToCheck, totalNumberOfRowsOut))
         print('* Total number of unmatched rows:', numErrors)
+        # The following Create bit output.xml so decide not to use at the moment until finding solution.
         # print(tabulate(df_merged_sideByside[
         #                    ['lineNum_in', 'lineContent_in', "_merge_in", "lineNum_out", 'lineContent_out',
         #                     "_merge_out"]], headers='keys', tablefmt='fancy_grid'))
         # Creating csv file for the result -> Save it to .../volume/robotTestCases/results/ directory.
 
+        dateAndTime= time.strftime("%Y%m%d_%H%M%S")
+        fileBase = "compareResult_" + fileBase + "_" + fileToCheckDir + "_" + dateAndTime + ".csv"
+        fileBase = rootDir + "/volume/robotTestCases/results_csv/" + fileBase
         print('* Exporting the result to :', fileBase)
-        fileBase = "compareResult_" + fileBase
-        df_merged_sideByside.to_csv(rootDir + "/volume/robotTestCases/results/" + fileBase + ".csv")
+        df_merged_sideByside.to_csv(fileBase)
 
-        #Move the result files to result directory
-        # oriDir = rootDir + "/volume/robotTestCases/" + fileBase + ".csv"
-        # desDir = rootDir + "/volume/robotTestCases/results/" + fileBase + ".csv"
-        # os.rename(oriDir, desDir)
 
     except FileNotFoundError as e:
         print("File not found({0}): {1}".format(e.errno, e.strerror))
@@ -86,6 +87,7 @@ def compare2LogFiles(fileBase, fileToCheck, fileToCheckDir):
         reasonToFail = "Unexpected error"
     finally:
         return failOrPass, reasonToFail
+
 
 
 def  fail_if_stringContains_FAIL_None (target_1, passOrFail_1, reason_1, target_2, passOrFail_2, reason_2):
