@@ -75,9 +75,20 @@ Well,  it has been a while doing homework :)
      
 ---
 #  CICD
-    ○ Configure GitHub to notify a change to Jenkins
-    ○ Jenkins run the above
-    * ToDo
-    
+
+## From Github
+    * I have created a webhook as follows
+        1) payload url: http://jenkins.qa.shoretel.com:8080/github-webhook/
+        2) To trigger: just push event
+
+## From Jenkins
+    * The following "Jenkins Job" has been created
+        1) Name: yc_job_ccdi_gitHub
+        2) This use "Git Hub Project" as follows
+           a. Project URL: https://github.com/youngchannoh/criblAssignment/
+           b. Repository URL: https://github.com/youngchannoh/criblAssignment.git
+           c. Build Triggers
+            -> GitHub hook trigger for GITScm polling
+   
     
     
