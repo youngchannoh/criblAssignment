@@ -87,7 +87,7 @@ Well,  it has been a while doing homework :)
         2) This use "Git Hub Project" as follows
            a. Project URL: https://github.com/youngchannoh/criblAssignment/
            b. Repository URL: https://github.com/youngchannoh/criblAssignment.git
-           c. Build Triggers
+           c. Build Triggers:
             -> GitHub hook trigger for GITScm polling
    
     
