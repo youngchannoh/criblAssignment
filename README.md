@@ -93,7 +93,7 @@
 
 ## From Jenkins
     * Create a jenkins job to do the following
-        1) Use Githup and Git plug in to get "GitHub hook trigger"
+        1) Use "Githup and Git plug-in" to get "GitHub hook trigger"
         2) Clone this Github project to your Unix node.
         3) Run "bash drAll.sh"
     * This configuration depends on a setup of your Jenkins server.
