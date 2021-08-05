@@ -1,28 +1,28 @@
 # cribl Assignment
-Well,  it has been a while doing homework :) 
+ 
 
 ### version
     1.0.0
 
 ### Goal
-    Validate if data received on the 2 "Target" nodes matches the one from "Agent" node.
+    Validate if data received by two "Target" nodes matches the data from "Agent" node.
 
 ###  Tool
-    ○ Jenkins
-        § This would send a command to the following Ubuntu host
-    ○ Unix VM
-        § 1 docker image
-        § 4 docker containers from the above image.
+    * Jenkins
+    * Github
+    * Unix VM
+        * 1 docker image
+        * 4 docker containers from the above image.
 ---
 
 # How to run test cases including setup and tear-down
 
 ## From Ubuntu VM
     * Clone this project to your UNix VM.
-    ->  1) Replace the value of rootDir on drSetup.sh and drTests.sh to the your cloned directory 
-    * Run the following command
-        2) bash drAll.sh
-    * The above will start the following
+    ->  1) Replace the value of "rootDir" in 2 files, "drSetup.sh and drTests.sh", to the directory you have cloned to.
+    * Run the following command (This is the master!)
+     => "bash drAll.sh"
+    * The above will execute the following
         1. drBuild.sh
         2. drSetup.sh
         3. drTest.sh
