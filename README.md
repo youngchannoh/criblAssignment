@@ -1,54 +1,63 @@
 # cribl Assignment
-Well,  it has been a while doing homework :) 
+ 
 
-## version
-1.0.0
+### version
+    1.0.0
 
----
-## Goal
-    Validate if data received on the 2 "Target" nodes matches the one from "Agent" node.
+### Goal
+    Validate if data received by two "Target" nodes matches the data from "Agent" node.
 
-##  Tool
-    ○ Jenkins
-        § This would send a command to the following Ubuntu host
-    ○ Unix VM
-        § 1 docker image
-        § 4 docker containers from the above image.
+###  Tool
+    * Jenkins
+    * Github
+    * Unix VM
+        * 1 docker image
+        * 4 docker containers from the above image.
 ---
 
 # How to run test cases including setup and tear-down
 
 ## From Ubuntu VM
-    * Run the following command
-    => bash drSetup_Tests_Teardown.sh
-    * The above will start the following
-        1. drSetup.sh
-        2. drTest.sh
-        3. drTeardown.sh
-    1 drSetup.sh
-        1. Create a volume for "target_2"
-        2. Create a volume for "target_2"
-        3. Start a container: "target_1"
-        4. Start a container: "target_2"
-        5. Start a container: "splitter"
-    2 drTest.sh
-        1. Start a container: agent
-        2. Run test cases
-        3. Exit the container after finishing the test.
-    3 drTeardown.sh
-        1. Exit the container: "splitter"
-        2. Exit the container: "target_1"
-        3. Exit the container: "target_2"
-        4. Delete the volume for "target_1"
-        5. Delete the volume for "target_2"
+    * Clone this project to your UNix VM.
+    
+    * Run the following command (This is the master!)
+     => "bash drAll.sh"
+    * The above will execute the following
+        1. drBuild.sh
+        2. drSetup.sh
+        3. drTest.sh
+        4. drTeardown.sh
+        5. drDeleteImage.sh
+    1 drBuild.sh
+        1) This would create a docker image: "cribl_image"
+    2. drSetup.sh
+        1) Create a volume for "target_2"
+        2) Create a volume for "target_2"
+        3) Create a network : "cribl_network"
+        4) Start a container: "target_1"
+        5) Start a container: "target_2"
+        6) Start a container: "splitter"
+    3 drTests.sh
+        1) Start a container: "agent"
+        2) Run test cases
+        3) Exit the container after finishing the test.
+    4 drTeardown.sh
+        1) Exit the container: "splitter"
+        2) Exit the container: "target_1"
+        3) Exit the container: "target_2"
+        4) Delete the volume for "target_1"
+        5) Delete the volume for "target_2"
+        6) Delete the network : "cribl_network"
+    5. drDeleteImage.sh
+        1) Delete the image : "cribl_image"
  
 ## From Jenkins
-    1. Create a Jenkins's node to your unix VM
+    1. Create a Jenkins's node (your unix VM)
         1) My Ubuntu version: "Ubuntu 16.04.2 LTS"
     2. Create a Jenkins' job as follows.
         1) Add the following to Command text box 
-        => cd /home/shoretel/docker_containers/cribl
-        => bash drSetup_Tests_Teardown.sh
+        => cd "to your cloned directory"
+        => bash drAll.sh
         2) Add the following post build action.
             a. "Publish Robot framework test results"
     3. The Test result 
@@ -77,18 +86,18 @@ Well,  it has been a while doing homework :)
 #  CICD
 
 ## From Github
-    * I have created a webhook as follows
-        1) payload url: http://jenkins.qa.shoretel.com:8080/github-webhook/
+    * Create a webhook to your "jenkins server"
+        1) payload url: http://"your Jenkins Server":8080/github-webhook/
         2) To trigger: just push event
+    * This configuration depends on a setup of your Jenkins server.
 
 ## From Jenkins
-    * The following "Jenkins Job" has been created
-        1) Name: yc_job_ccdi_gitHub
-        2) This use "Git Hub Project" as follows
-           a. Project URL: https://github.com/youngchannoh/criblAssignment/
-           b. Repository URL: https://github.com/youngchannoh/criblAssignment.git
-           c. Build Triggers.
-            -> GitHub hook trigger for GITScm polling
+    * Create a jenkins job to do the following
+        1) Use "Githup and Git plug-in" to get "GitHub hook trigger"
+        2) Clone this Github project to your Unix node.
+        3) Run "bash drAll.sh"
+    * This configuration depends on a setup of your Jenkins server.
+     
    
     
     
