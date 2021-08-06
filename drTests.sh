@@ -1,6 +1,6 @@
 #!/bin/bash
 ### Variables ###
-rootDir=/home/shoretel/docker_containers/cribl
+rootDir="$PWD"
 dockerImage=cribl_image
 environFile=env.list
 hostName=agent
