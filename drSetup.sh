@@ -1,5 +1,6 @@
 #!/bin/bash
 ### Variables ###
+rootDir=/home/shoretel/docker_containers/cribl
 dockerImage=cribl_image
 bridgNetworkName=cribl_network
 hostName_t1=target_1
@@ -7,8 +8,8 @@ hostName_t2=target_2
 hostName_s=splitter
 sharedVolume_t1=vol_target_1
 sharedVolume_t2=vol_target_2
-hostLocalDir_t1=/home/shoretel/docker_containers/cribl/volume/target_1
-hostLocalDir_t2=/home/shoretel/docker_containers/cribl/volume/target_2
+hostLocalDir_t1=${rootDir}/volume/target_1
+hostLocalDir_t2=${rootDir}/volume/target_2
 containerDir=/app/assignment
 fileToRunOnContainer_t=run_target.sh
 fileToRunOnContainer_s=run_splitter.sh
